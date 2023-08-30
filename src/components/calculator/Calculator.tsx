@@ -14,9 +14,10 @@ interface InputState {
 const Calculator: React.FC = () => {
     const [inputState, setInputState] = useState<InputState>();
     const onInputStateChange = useCallback<onEditorChangeCallback>(
-        (state, editor) => (console.log("dupa"),setInputState({ editorState: state, editor })),
+        (state, editor) => setInputState({ editorState: state, editor }),
         []
     );
+    
     return (
         <>
             <InputDisplay onStateChange={onInputStateChange} />

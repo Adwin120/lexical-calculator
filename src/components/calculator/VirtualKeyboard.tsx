@@ -1,7 +1,8 @@
 import { type PropsWithChildren, createContext, useContext } from "react";
 import { useCallback } from "react";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
-import { CONTROLLED_TEXT_INSERTION_COMMAND, type LexicalEditor } from "lexical";
+import { $applyNodeReplacement, $createTextNode, $insertNodes, CONTROLLED_TEXT_INSERTION_COMMAND, type LexicalEditor } from "lexical";
+import { $createMathFunctionNode } from "@/lexical/MathFunctionNode";
 
 const KeyboardContext = createContext<{
     editor: LexicalEditor | null;
@@ -19,13 +20,14 @@ const VirtualKeyboard: React.FC<{ editor: LexicalEditor }> = ({ editor }) => {
                 <button className="bg-red-500">6</button>
                 <button className="bg-red-500">7</button>
                 <button className="bg-red-500">8</button>
-                <KeyboardButton>test</KeyboardButton>
+                <DigitButton>test</DigitButton>
+                <FunctionButton>function test</FunctionButton>
             </KeyboardContext.Provider>
         </div>
     );
 };
 
-const KeyboardButton: React.FC<PropsWithChildren> = ({ children }) => {
+const DigitButton: React.FC<PropsWithChildren> = ({ children }) => {
     const { editor } = useContext(KeyboardContext);
     const onClick = useCallback(() => {
         editor!.dispatchCommand(CONTROLLED_TEXT_INSERTION_COMMAND, "test");
@@ -37,5 +39,18 @@ const KeyboardButton: React.FC<PropsWithChildren> = ({ children }) => {
         </button>
     );
 };
+
+const FunctionButton: React.FC<PropsWithChildren> = ({children}) => {
+    const { editor } = useContext(KeyboardContext);
+    const onClick = useCallback(() => {
+        editor!.update(() => {
+            $insertNodes([$createMathFunctionNode("log")])
+        });
+    }, [editor]);
+
+    return (
+        <button className="bg-green-700" onClick={onClick}>{children}</button>
+    )
+}
 
 export default VirtualKeyboard;
